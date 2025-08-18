@@ -1,0 +1,161 @@
+{
+  "timestamp": "20250813_005855",
+  "summary": {
+    "total_tests": 9,
+    "passed_tests": 8,
+    "failed_tests": 1,
+    "success_rate": "88.9%"
+  },
+  "detailed_results": {
+    "基础导入测试": {
+      "bioagent_import": {
+        "status": "success",
+        "error": null
+      },
+      "mcp_tools_import": {
+        "status": "success",
+        "error": null
+      },
+      "biomni_wrappers_import": {
+        "status": "success",
+        "error": null
+      }
+    },
+    "MCP工具测试": {
+      "mcp_tools_load": {
+        "status": "success",
+        "count": 35,
+        "tools": [
+          "biomcp:search",
+          "biomcp:fetch",
+          "biomcp:think",
+          "biomcp:article_searcher",
+          "biomcp:article_getter",
+          "biomcp:trial_searcher",
+          "biomcp:trial_getter",
+          "biomcp:trial_protocol_getter",
+          "biomcp:trial_references_getter",
+          "biomcp:trial_outcomes_getter",
+          "biomcp:trial_locations_getter",
+          "biomcp:variant_searcher",
+          "biomcp:variant_getter",
+          "biomcp:alphagenome_predictor",
+          "biomcp:gene_getter",
+          "biomcp:disease_getter",
+          "biomcp:drug_getter",
+          "biomcp:nci_organization_searcher",
+          "biomcp:nci_organization_getter",
+          "biomcp:nci_intervention_searcher",
+          "biomcp:nci_intervention_getter",
+          "biomcp:nci_biomarker_searcher",
+          "biomcp:nci_disease_searcher",
+          "biomcp:openfda_adverse_searcher",
+          "biomcp:openfda_adverse_getter",
+          "biomcp:openfda_label_searcher",
+          "biomcp:openfda_label_getter",
+          "biomcp:openfda_device_searcher",
+          "biomcp:openfda_device_getter",
+          "biomcp:openfda_approval_searcher",
+          "biomcp:openfda_approval_getter",
+          "biomcp:openfda_recall_searcher",
+          "biomcp:openfda_recall_getter",
+          "biomcp:openfda_shortage_searcher",
+          "biomcp:openfda_shortage_getter"
+        ],
+        "error": null
+      }
+    },
+    "Biomni工具测试": {
+      "biomni_tools_load": {
+        "status": "success",
+        "count": 0,
+        "tools": [],
+        "error": null
+      }
+    },
+    "BioAgent创建测试": {
+      "bioagent_creation": {
+        "status": "success",
+        "tool_count": 41,
+        "tools": [
+          "KnowledgeGraphSearch",
+          "SMILESToBiosyntheticPathway",
+          "AddReactantsToBionavi",
+          "SMILESToPredictedSynthesisInfo",
+          "ProteinGenomeCollector",
+          "GenomeDatabaseQuery",
+          "biomcp:search",
+          "biomcp:fetch",
+          "biomcp:think",
+          "biomcp:article_searcher",
+          "biomcp:article_getter",
+          "biomcp:trial_searcher",
+          "biomcp:trial_getter",
+          "biomcp:trial_protocol_getter",
+          "biomcp:trial_references_getter",
+          "biomcp:trial_outcomes_getter",
+          "biomcp:trial_locations_getter",
+          "biomcp:variant_searcher",
+          "biomcp:variant_getter",
+          "biomcp:alphagenome_predictor",
+          "biomcp:gene_getter",
+          "biomcp:disease_getter",
+          "biomcp:drug_getter",
+          "biomcp:nci_organization_searcher",
+          "biomcp:nci_organization_getter",
+          "biomcp:nci_intervention_searcher",
+          "biomcp:nci_intervention_getter",
+          "biomcp:nci_biomarker_searcher",
+          "biomcp:nci_disease_searcher",
+          "biomcp:openfda_adverse_searcher",
+          "biomcp:openfda_adverse_getter",
+          "biomcp:openfda_label_searcher",
+          "biomcp:openfda_label_getter",
+          "biomcp:openfda_device_searcher",
+          "biomcp:openfda_device_getter",
+          "biomcp:openfda_approval_searcher",
+          "biomcp:openfda_approval_getter",
+          "biomcp:openfda_recall_searcher",
+          "biomcp:openfda_recall_getter",
+          "biomcp:openfda_shortage_searcher",
+          "biomcp:openfda_shortage_getter"
+        ],
+        "error": null
+      }
+    },
+    "特定工具测试": {
+      "synthesis_tool": {
+        "status": "failed",
+        "error": "SMILESToPredictedSynthesisInfo.__init__() missing 2 required positional arguments: 'llm' and 'memory'"
+      },
+      "genome_tools": {
+        "status": "success",
+        "tools": [
+          {
+            "name": "ProteinGenomeCollector",
+            "desc": "Input several seed sequences of a protein along with an optional species name to build a genome database. Example input: {\"ncbi_ids\": [\"OIR22820.1\", \"RZD35475.1\".........], \"species\": \"Archaea\"})"
+          },
+          {
+            "name": "GenomeDatabaseQuery",
+            "desc": "Manually input or open a file to obtain some seed sequences of a protein. These sequences will be used to search the established genome database for genomes containing the protein.Example input in JSON format: {\"ncbi_ids\": [\"RZD39016.1\", \"RZD35475.1\", ...], \"file_input\": \"Yes/No\"}."
+          }
+        ],
+        "error": null
+      }
+    },
+    "配置文件测试": {
+      "mcp_config": {
+        "status": "success",
+        "servers": [
+          "biomcp",
+          "chemmcp"
+        ],
+        "enabled_servers": [
+          "biomcp",
+          "chemmcp"
+        ],
+        "error": null
+      }
+    }
+  }
+}

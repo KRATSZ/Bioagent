@@ -1,0 +1,18 @@
+mcp_servers:
+  biomcp:
+    enabled: true
+    command: ["python", "-m", "biomcp", "run", "--mode", "stdio"]
+    env:
+      CBIO_TOKEN: "${CBIO_TOKEN}"
+      CBIO_BASE_URL: "${CBIO_BASE_URL}"
+
+  chemmcp:
+    enabled: true
+    # 使用独立 repo + uv --directory 方式（采用项目内路径：bioagent/ChemMCP）
+    command: ["uv", "--directory", "bioagent/ChemMCP", "run", "-m", "chemmcp"]
+    env:
+      CHEMSPACE_API_KEY: "${CHEMSPACE_API_KEY}"
+      RXN4CHEM_API_KEY: "${RXN4CHEM_API_KEY}"
+      TAVILY_API_KEY: "${TAVILY_API_KEY}"
+      LLM_MODEL_NAME: "${LLM_MODEL_NAME}"
+      OPENAI_API_KEY: "${OPENAI_API_KEY}"

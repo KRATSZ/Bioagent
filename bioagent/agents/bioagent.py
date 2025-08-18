@@ -3,6 +3,7 @@ import langchain
 from dotenv import load_dotenv
 from langchain import PromptTemplate, chains
 from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+from .callbacks import ToolLoggingCallbackHandler
 from pydantic import ValidationError
 from rmrkl import ChatZeroShotAgent, RetryAgentExecutor
 from langchain.memory import ConversationBufferMemory  # 新增导入
@@ -56,6 +57,9 @@ class BioAgent:
             )
 
             # 修改agent_executor初始化
+            # 挂载工具日志回调（供前端展示时序）
+            self.tool_logger = ToolLoggingCallbackHandler()
+
             self.agent_executor = RetryAgentExecutor.from_agent_and_tools(
                 tools=tools,
                 agent=ChatZeroShotAgent.from_llm_and_tools(
@@ -68,6 +72,7 @@ class BioAgent:
                 verbose=True,
                 max_iterations=max_iterations,
                 memory=self.memory,  # 添加记忆组件
+                callbacks=[self.tool_logger],
             )
 
         rephrase = PromptTemplate(
@@ -85,9 +90,15 @@ class BioAgent:
                     self.memory.save_context({"input": human}, {"output": ai})
 
             # 执行agent
-            outputs = self.agent_executor({"input": prompt,"chat_history":self.memory})
+            outputs = self.agent_executor({"input": prompt, "chat_history": self.memory})
 
             # 返回当前响应
             return outputs["output"]
         except Exception as e:
             return f"Error occurred: {str(e)}"
+
+    def pop_tool_events(self):
+        try:
+            return self.tool_logger.pop_events()
+        except Exception:
+            return []

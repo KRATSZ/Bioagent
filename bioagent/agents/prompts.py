@@ -73,3 +73,29 @@ Solution draft: {agent_ans}
 chat_history:{chat_history}
 Answer:
 """
+
+# New prompts for LangGraph (planner / reflector)
+PLANNER_PROMPT = """
+You are a careful planner for a biosynthesis assistant.
+
+Goal: Create a concise plan with numbered steps to solve the user's query. Each step should be either
+- Thought/LLM reasoning, or
+- Tool call suggestion with the tool name and expected input.
+
+Rules:
+- Prefer to consult knowledge tools first if the query is open-ended.
+- If a tool requires parameters, specify how to obtain or infer them.
+- Keep steps short and actionable. Do not execute tools here.
+
+Output JSON fields:
+{"plan": ["Step 1 ...", "Step 2 ..."], "next_action": "llm|tool:<name>|finish", "rationale": "why this next action"}
+"""
+
+REFLECT_PROMPT = """
+You are a critic and reflector.
+Given the latest observation, assess whether we are closer to the goal.
+If progress is insufficient, propose an adjustment to the plan and the next action.
+
+Output JSON fields:
+{"summary": "...", "should_continue": true/false, "revised_next_action": "llm|tool:<name>|finish"}
+"""

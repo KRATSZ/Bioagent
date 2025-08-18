@@ -1,0 +1,100 @@
+BioAgent 项目技术交接与进度记录
+
+一、已完成的工作（2025-01-08）
+1) MCP 接入
+   - 新增 bioagent/agents/mcp_tools.py：基于 STDIO 的 MCP 客户端封装，支持自动发现工具（tools/list）和调用（tools/call），并以 LangChain Tool 统一暴露。
+   - 新增 mcp_config.yaml：默认启用 BioMCP（python -m biomcp run --mode stdio），ChemMCP 使用“独立 repo + uv”方式（目录：D:\LLM\BioAgent\ChemMCP），已配置为：
+     command: ["uv", "--directory", "D:\\LLM\\BioAgent\\ChemMCP", "run", "-m", "chemmcp"]
+   - 恢复命令归一化逻辑：即便 PATH 未包含可执行名，也可通过 sys.executable -m 方式稳定拉起。
+
+2) Biomni 工具封装
+   - 新增 bioagent/tools/biomni_wrappers.py：动态扫描 Biomni 模块函数并封装为 LangChain Tool（白名单：database, literature, biochemistry, genetics, bioengineering）。
+   - 目前加载为空（0），需后续针对函数签名/依赖继续适配。
+
+3) 核心工具集成
+   - 已保留并运行：KnowledgeGraphSearch（Neo4j）、SMILESToBiosyntheticPathway、AddReactantsToBionavi、SMILESToPredictedSynthesisInfo（BioNavi-NP链路）、ProteinGenomeCollector、GenomeDatabaseQuery。
+   - 安装补充依赖：trackpy、scikit-image、gradio、uv、biomcp-python、mcp>=1.12.0 等。
+
+4) 前端
+   - 新增 app.py（Gradio）：已硬编码测试用 LLM（OPENAI_API_BASE=https://api.ai190.com/v1, model=gemini-2.5-pro, key=提供的测试key），可一键启动并交互。
+
+5) 测试与报告
+   - 新增测试脚本 test_backend.py：覆盖 MCP 工具发现、Biomni 封装、Agent 构建、核心工具等，自动生成 JSON 报告。
+   - 运行结果：共 9 项测试，8 通过，1 失败（单独实例化 SMILESToPredictedSynthesisInfo 缺少 llm/memory，但在 Agent 内运行正常）。
+   - 生成文档：BioAgent_测试报告.md（成功率 88.9%，BioMCP 成功加载 35 个工具，总工具 41 个）。
+
+6) ChemMCP
+   - 已采用“独立 repo + uv”部署（目录：D:\LLM\BioAgent\ChemMCP），mcp_config.yaml 已指向该目录，以 uv 方式启动。
+   - 提供 ChemMCP配置指南.md，包含三种集成方案与注意事项。
+
+二、当前状态
+- 运行方式
+  - 前端：.\.venv\Scripts\python.exe app.py （默认 7860 端口）
+  - 后端测试：.\.venv\Scripts\python.exe test_backend.py
+  - Agent 快速校验：以 mcp_config.yaml + 硬编码 LLM 可加载 41 个工具（含 35 个 BioMCP）。
+
+- 工具总体：41 个（6 个本地工具 + 35 个 BioMCP）。ChemMCP 已配置为 uv 独立方式，可随开随用。
+
+三、下一步计划
+1) LangGraph 迁移（优先级高）
+   - 目标：将当前基于 LangChain 的 ChatZeroShotAgent + RetryAgentExecutor 迁移到 LangGraph 状态机架构；
+   - 步骤：
+     a. 结合 Context7 MCP 文档（/modelcontextprotocol/modelcontextprotocol）明确工具/资源/提示/采样能力在图中的节点职责；
+     b. 新建 bioagent/graph/bio_graph.py：定义 AgentState、router 节点、tool 节点（并行）、llm 节点、checkpoint；
+     c. 先维持当前工具接入逻辑（mcp_tools + biomni_wrappers），保证无缝切换；
+     d. 增加运行时指标与错误恢复策略（重试、降级）。
+
+2) Biomni 工具完善
+   - 针对空加载问题，逐模块核对：
+     a. 检查 Biomni 工具函数是否在 __all__ 或模块命名空间可见；
+     b. 处理第三方依赖（如 skimage/trackpy 等）缺失导致的导入失败；
+     c. 规范函数签名，必要时添加轻量 wrapper 适配 JSON 参数。
+
+3) ChemMCP 打通
+   - 采用“独立 repo + uv”的方式（已配置）；
+   - 设置 API 环境变量（CHEMSPACE_API_KEY / RXN4CHEM_API_KEY / TAVILY_API_KEY / LLM_MODEL_NAME / OPENAI_API_KEY）；
+   - 通过 test_backend.py 验证工具数量增加与调用可用；
+   - 若 docker 未安装，禁用 PythonExecutor 相关工具（QuickConfig）。
+
+4) 清理冗余与完善配置
+   - 删除无用的临时测试脚本或注释（保留 test_backend.py / test_chemmcp.py）；
+   - 增加 .env.example（OPENAI_API_BASE、OPENAI_API_KEY、MCP_CONFIG、CBIO_TOKEN 等）；
+   - 将 Neo4j 硬编码凭据迁至 .env。
+
+5) 端到端用例与评估
+   - 以 SMILES → 逆合成预测 → BioMCP 文献/试验验证为主线，形成标准 demo；
+   - 在前端提供工具调用可视化/日志区，记录调用链路与耗时；
+   - 输出试运行报告（工具调用成功率、端到端时延、输出质量评估）。
+
+四、建议与风险
+- 建议：
+  - 继续采用 STDIO 方式连接 MCP（稳定、易维护）；
+  - ChemMCP 建议使用 uv 独立环境，避免与 BioAgent venv 发生依赖冲突；
+  - 尽快迁移 LangGraph，提升复杂任务可解释性与鲁棒性。
+
+- 风险：
+  - 外部 API 限流与密钥管理；
+  - 第三方依赖（如 skimage/trackpy/rdkit/docker）在不同机器的安装差异；
+  - 逆合成后端服务（BioNavi）网络可达性与可用性。
+
+五、操作清单（交接用）
+- 启动前端：
+  1) 设置环境变量：
+     - OPENAI_API_BASE=XXXXXX
+     - OPENAI_API_KEY=（已配置测试 key，可替换）
+     - MCP_CONFIG=./mcp_config.yaml
+  2) 运行：.\.venv\Scripts\python.exe app.py
+
+- 运行后端测试：
+  .\.venv\Scripts\python.exe test_backend.py
+
+- 启用 ChemMCP（如需）：
+  1) 确认 D:\LLM\BioAgent\ChemMCP 可用，执行 uv sync && uv run -m chemmcp --help
+  2) mcp_config.yaml 已配置 uv --directory；确保 uv 可执行在 PATH
+  3) 设置 CHEMSPACE_API_KEY / RXN4CHEM_API_KEY / TAVILY_API_KEY / LLM_MODEL_NAME / OPENAI_API_KEY
+  4) 重新运行 test_backend.py 查看工具增量
+
+六、附注
+- 参考与规范：Model Context Protocol（Context7 文档 ID：/modelcontextprotocol/modelcontextprotocol），重点关注：
+  - STDIO 传输规范、工具发现与调用（tools/list, tools/call）、SSE 回退；
+  - 客户端/服务器能力协商与扩展字段（prompts/resources/tools/sampling 等）。

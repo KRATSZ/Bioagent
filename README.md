@@ -61,3 +61,104 @@ if __name__ == "__main__":
 
 
 
+
+
+
+## 四、项目结构（最新文件树）
+
+```text
+BioAgent/
+├─ app.py                     # Gradio 前端（本地聊天界面）
+├─ main.py                    # 命令行入口（快速验证）
+├─ mcp_config.yaml            # MCP 服务器配置
+├─ requirements.txt
+├─ README.md
+├─ results/
+│  ├─ genome_classification.txt
+│  ├─ GGGPS_query_ID.txt
+│  └─ Plsc_genome_ID.txt
+├─ Docs&test/
+│  ├─ Docs/
+│  │  ├─ PROGRESS.txt
+│  │  ├─ background.txt
+│  │  ├─ BioAgent_测试报告.md
+│  │  └─ ChemMCP配置指南.md
+│  └─ Test/
+│     ├─ test_backend.py
+│     ├─ test_chemmcp.py
+│     └─ test_report_*.json
+└─ bioagent/
+   ├─ __init__.py
+   ├─ utils.py
+   ├─ version.py
+   ├─ agents/
+   │  ├─ bioagent.py          # 构建 LLM Agent（记忆、工具、执行器）
+   │  ├─ mcp_tools.py         # 发现/封装 MCP 工具（STDIO）
+   │  ├─ tools.py             # 汇总并注册所有工具（本地 + MCP + Biomni）
+   │  └─ prompts.py
+   ├─ tools/
+   │  ├─ biomni_wrappers.py   # 动态封装 Biomni 函数为 LangChain 工具
+   │  ├─ Genome.py            # 基因组采集/查询工具
+   │  ├─ PathPrediction.py    # 逆合成/路径预测工具（BioNavi-NP 相关）
+   │  ├─ search.py            # 知识图谱/检索相关
+   │  └─ prompts.py
+   ├─ Biomni/                 # 外部“生物领域工具集”源码（已内嵌）
+   │  └─ biomni/tool/...      # database、literature、biochemistry、genetics 等
+   └─ ChemMCP/                # 外部“化学 MCP 服务器”源码（独立运行）
+      └─ src/chemmcp/...      # tools、tool_utils、utils
+```
+
+## 五、模块简介
+
+- **总体定位**: 这是一个“生物逆合成 + 知识图谱 + 工具增强”的智能体（Agent）项目，支持本地工具与 MCP 远程工具协同工作。
+
+- **前端与入口**
+  - `app.py`: 使用 Gradio 提供网页聊天界面，便于交互式测试。
+  - `main.py`: 命令行方式快速跑通核心 Agent。
+
+- **Agent 核心（bioagent/agents）**
+  - `bioagent.py`: 构建对话式智能体。基于 LangChain 的 ChatZeroShotAgent + Retry 执行器，加入对话记忆，支持多轮对话与工具调用。
+  - `tools.py`: 注册并汇总所有可用工具，包含本地工具、MCP 工具、以及 Biomni 封装的工具。
+    - 本地核心工具包括：`KnowledgeGraphSearch`、`SMILESToBiosyntheticPathway`、`AddReactantsToBionavi`、`SMILESToPredictedSynthesisInfo`、`GenomeCollectorTool`、`GenomeQueryTool`。
+  - `mcp_tools.py`: 读取 `mcp_config.yaml`，通过 STDIO 启动 MCP 服务器（如 BioMCP、ChemMCP），自动发现其提供的工具并封装为 LangChain Tool（Windows 友好）。
+
+- **本地工具（bioagent/tools）**
+  - `biomni_wrappers.py`: 动态扫描并封装 `Biomni` 模块中的函数为可调用工具（按白名单模块过滤）。
+  - `Genome.py`: 基因组采集与数据库查询相关能力。
+  - `PathPrediction.py`: 生物逆合成路径预测相关（与 BioNavi-NP 链路打通）。
+  - `search.py` 与 `prompts.py`: 检索与提示模板辅助。
+
+- **外部能力（已集成源码）**
+  - `bioagent/Biomni/`: 面向生物医学各子领域的大量工具集合（database、literature、biochemistry、genetics 等）。
+  - `bioagent/ChemMCP/`: 化学工具的 MCP 服务器实现，通常以 `uv` 独立环境启动后由 MCP 客户端调用。
+
+- **文档与测试（Docs&test）**
+  - `Docs/PROGRESS.txt`: 项目进度与交接要点。
+  - `Docs/background.txt`: 研究背景草稿与方法说明。
+  - `Test/test_backend.py`、`Test/test_chemmcp.py`: 回归测试与工具连通性测试。
+
+## 六、如何运行（Windows PowerShell）
+
+```powershell
+# 1) 可选：在当前会话设置环境变量
+$env:OPENAI_API_BASE = "XXX"
+$env:OPENAI_API_KEY  = "<你的key>"
+$env:MCP_CONFIG      = ".\mcp_config.yaml"
+
+# 2) 命令行快速验证
+python .\main.py
+
+# 3) 启动 Gradio 前端（默认 7860 端口）
+python .\app.py
+# 或使用虚拟环境 Python：
+.\.venv\Scripts\python.exe .\app.py
+
+# 4) 运行后端测试
+.\.venv\Scripts\python.exe .\Docs&test\Test\test_backend.py
+```
+
+## 七、更多文档
+
+- 项目进度与交接说明：`Docs&test/Docs/PROGRESS.txt`
+- 研究背景草稿：`Docs&test/Docs/background.txt`
+

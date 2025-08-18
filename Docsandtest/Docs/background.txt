@@ -1,0 +1,309 @@
+Knowledge Graph-guided LLM agents discover biosynthetic pathways bridging the lipid divide in membrane evolution
+Abstract
+The distinct membrane lipid compositions of archaea (ether-linked isoprenoids) and bacteria/eukaryotes (ester-linked fatty acids), known as the “lipid divide”, represent a fundamental dichotomy in cellular evolution. However, the discovery of hybrid isoprenoidal/branched glycerol dialkyl glycerol tetraethers (ib-GDGTs) in environmental samples challenges this paradigm, yet their biosynthetic origins remain enigmatic due to lack of cultivated producers and limitations of retrosynthetic algorithms. Here, we present an LLM-powered, multi-agent system that semi-autonomously elucidated plausible ib-GDGT biosynthetic mechanisms. By integrating dynamic knowledge graphs and tool augmentation in a closed-loop architecture, this system generated an unexpected hypothesis: archaeal homologs of 1-acyl-sn-glycerol-3-phosphate acyltransferases (PlsC) can acylate isoprenoid-containing lipid precursors with fatty acids. LLM agents designed and executed robotic experiments to validate this hypothesis and further revealed substrate promiscuity of other enzymes in the proposed pathways to accommodate both archaeal- and bacterial-like features. These findings provide experimental evidence of a "lipid continuum" model of membrane evolution while demonstrating how structured knowledge representation enables autonomous discovery by LLMs.
+
+
+
+Introduction
+The fundamental distinction between archaeal and bacterial membrane compositions, a phenomenon known as the "lipid divide", represents one of the most profound evolutionary puzzles in biology. While bacteria and eukaryotes construct their membranes from ester-linked fatty acids attached to sn-glycerol-3-phosphate (G3P), archaeal membrane lipids consist of ether-linked isoprenoid chains bound to the enantiomeric sn-glycerol-1-phosphate (G1P). This dichotomy extends beyond mere chemical differences. Archaeal membranes feature unique lipids such as glycerol dibiphytanyl glycerol tetraethers (GDGTs)—membrane-spanning molecules that form monolayer structures conferring stability in extreme environments. The evolutionary origins and implications of this fundamental biochemical divergence remain enigmatic, particularly given that eukaryotes, despite their archaeal ancestry, possess bacterial-type membranes.
+Recent discoveries, however, have begun to challenge this dichotomy. While traditional theories on lipid divide assumed archaeal and bacterial lipids were fundamentally incompatible, both liposome models (Shimada and Yamagishi, 2011; Chong et al., 2012) and engineered bacteria (Caforio et al., 2018) demonstrate that intermolecular mixtures of archaeal and bacterial lipids form stable and functional membranes. Moreover, metagenomic analyses reveal widespread horizontal gene transfers (HGTs) of lipid biosynthetic genes between prokaryotic domains. For example, Fibrobacteres-Chlorobi-Bacteroidetes (FCB) bacteria harbor homologs of archaeal lipid synthases (Villanueva et al., 2021), while Asgardarchaeota encode biosynthetic pathways for bacterial membrane lipids (Villanueva et al., 2019). 
+More strikingly, environmental surveys have revealed intramolecular hybrid lipids, notably isoprenoidal/branched glycerol dialkyl glycerol tetraethers (ib-GDGTs), which incorporate both isoprenoid and fatty acid moieties within single molecules. Similarly intriguing, certain archaea such as Sulfolobus acidocaldarius and Haloferax volcanii, possess de novo fatty acid synthesis capabilities, potentially providing acyl substrate for hybrid lipid formation. Moreover, in engineered yeast we recently discovered hybrid neutral lipids containing isoprenoid ether and acyl ester linkages, demonstrating the catalytic promiscutiy of membrane lipid synthases. Such observations challenge the notion of an insurmountable evolutionary barrier between membrane types and suggest that transitional forms may have facilitated major evolutionary transitions, including eukaryogenesis. 
+Despite mounting evidence for intramolecular hybrid lipid occurrence, their biosynthetic mechanisms remain unknown. This knowledge gap stems from formidable technical challenges. Environmental samples containing ib-GDGTs lack cultivated microbial producers, precluding traditional genetic and biochemical approaches. Computational retrosynthetic tools, while powerful for enumerating artificial pathways, may struggle to identify evolutionarily-relevant reaction mechaisms that underlie hybrid lipid synthesis. The problem demands cross-domain knowledge integration spanning genomics, biochemistry, and geochemistry. 
+For such complex challenges, large language models (LLMs) emerge as a transformative scientific discovery approach. Recent demonstrations of LLM-powered systems autonomously planning and executing chemical syntheses, as exemplified by Coscientist and ChemCrow, highlight their potential for scientific discovery. However, elucidating novel biosynthetic pathways requires capabilities beyond augmenting LLMs with predefined tools. While tool-based approaches provide accuracy within known chemistry, they remain constrained by rigid rules and cannot extrapolate to unprecedented enzymatic mechanisms. Conversely, unconstrained LLMs risk hallucination when reasoning about complex biochemical relationships. These limitations necessitate a new paradigm that bridges the precision of computational analyses, the creative reasoning of LLMs, and the final validation of wet-lab experiments, through structured knowledge representation.
+Here, we present a multi-agent artificial intelligence (AI) system that semi-autonomously elucidated plausible biosynthetic mechanisms for ib-GDGT formation. Our system advances beyond existing AI co-scientist approaches by integrating natural language processing not only with tool augmentation, but also dynamic knowledge graph reasoning. This new design enables complex multi-hop inferences across biochemical, taxonomic, and evolutionary relationships while maintaining human interpretability and experimental grounding. The system successfully identified and validated promiscuous archaeal enzymes that synthesize hybrid membrane lipid intermediates by acylating archaeal lipid precursors with bacterial-type fatty acids. Our work demonstrates how augmenting LLM flexibility with structured knowledge and domain-specific tools can drive AI-driven discovery of unexpected evolutionary connections that reshape our understanding of early cellular evolution.
+
+
+Results
+Multi-agent AI system architecture for autonomous retrobiosynthetic reasoning
+To elucidate the biosynthetic origins of ib-GDGTs, we developed a multi-agent AI system that integrates natural language processing, dynamic knowledge graph construction, tool augmentation, and automated experimentation (Figure 1). Unlike existing AI tools that rely solely on predefined chemical rules, our systems employs structured knowledge representation to enable complex multi-hop reasoning across biochemical, taxonomic, and evolutionary relationships. 
+The architecture comprises five specialized agents orchestrated by an intelligent Task Manager built on the LangGraph framework. The Literature Reader constructs and maintains a dynamic knowledge graph by extracting entities (genes, enzymes, metabolites, organisms), relationships (catalysis, co-occurrence, taxonomy), and domain-specific inference rules from scientific publications. As necessary, critical ontological decisions call for human expert validation through an interrupt mechanism (Supplementary Fig. X). The Experiment Designer queries this graph to generate testable hypotheses, employing both graph-based reasoning and domain-specific tools for retrobiosynthetic and genomic analyses. The Robot Operator translates hypotheses into executable protocols for our automated biofoundry platforms, managing diverse experimental workflows including DNA synthesis, protein expression, and enzymatic assays. The Computational Analyst processes experimental data to update the knowledge graph, creating a closed-loop discovery system. This iterative refinement process enables the system to learn from both successes and failures, progressively narrowing the hypothesis space.
+Knowledge graph construction reveals critical gaps in hybrid membrane lipid biosynthesis
+The discovery process began with the core question: how do organisms synthesize ib-GDGTs? The Task Manager initiated investigation by instructing the Literature Reader to construct a comprehensive knowledge graph encompassing archaeal lipid biosynthesis, bacterial lipid biosyntheis, and known hybrid lipid structures. Through iterative processing of relevant publications, the system extracted and organized XXX entities and XXX relationships, creating a structure representation of information and knowledge about biosynthetic enzymes, their substrate specificities, and phylogenetic distributions. 
+Initial analysis revealed a critical knowledge gap: while intermolecular mixtures of archaeal and bacterial lipids were documented, no enzymatic mechanism for ib-GDGT formation has been identified. The system’s attempt to apply BioNavi-NP, a state-of-the-art retrosynthesis tool, failed to generate plausible pathways, likely due to the absence of recently published biosynthetic reactions of archaeal membrane lipids in its training data. In response, the Literature Reader agent extracted relevant archaeal lipid biosynthesis reactions from scientific literature, which were used to re-train BioNavi-NP. Despite this augmentation, critical mechanistic gaps remained, highlighting the limitations of rule-based approaches for new biosynthetic problems.
+Graph-based reasoning identifies unexpected enzymatic hypothesis
+The breakthrough emerged through the AI system's graph-based reasoning capabilities. By analyzing structural and mechanistic similarities across the knowledge graph, the Experiment Designer recognized a key analogy: the bacterial reaction LPA + acyl-CoA → PA shared mechanistic parallels with the archaeal reaction GGGP + GGPP → DGGGP. Both reactions involve acyl transfer to a glycerophosphate backbone, suggesting potential substrate promiscuity.
+This insight led to a counterintuitive hypothesis: bacterial-type PlsC enzymes, if present in archaea, might accommodate archaeal substrates. Supporting evidence emerged through multi-hop graph traversal: (1) PlsC homologs had been identified in some archaeal genomes, particularly Asgardarchaeota; (2) certain archaea like Sulfolobus acidocaldarius possess fatty acid biosynthesis capabilities; (3) the proposed reaction GGGP + acyl-CoA → ib-PA would yield an ideal precursor for ib-GDGT synthesis. The system prioritized this hypothesis based on evolutionary plausibility scores derived from the knowledge graph structure.
+
+
+Genomic mining analysis reveals widespread archaeal PlsCs distributions
+To test the AI-generated hypothesis on PlsC, the system designed and executed a genome mining strategy. The Experiment Designer agent formulated a search protocol using GGGPS (P0C882) and PlsC (HWG90728) as query sequences, reasoning that co-occurrence of these genes would indicate potential for hybrid lipid synthesis. The system automated BLAST analyses against the NCBI non-redundant database, with the Computational Analyst agent processing results in real-time to identify archaeal genomes exhibiting significant homology (E-value ≤ 10⁻⁵).
+For each identified genome, the system implemented an automated annotation pipeline: retrieving genomic assemblies, performing functional annotation via KAAS (KEGG Automatic Annotation Server) to derive KO identifiers, and mapping metabolic pathways to assess biosynthetic capabilities. The knowledge graph continuously integrated these findings, enabling the Experiment Designer to refine search parameters iteratively. 
+The AI-driven analyses revealed PlsC homologs distributed across 86 GGGPS-encoding archaeal genomes—substantially exceeding previous reports that identified PlsC primarily in ~20 archaeal genomes including Asgardarchaeota and Woesearchaeotas via manual curation. The expanded phylogenetic distribution encompassed multiple archaeal superphyla: Promethearchaeota (12 genomes), TACK superphylum including Thaumarchaeota and Crenarchaeota (28 genomes), diverse Euryarchaeota lineages (31 genomes), and several unclassified archaeal groups (15 genomes) (Fig. X). This co-occurrence pattern, identified through the AI system's integrative analysis, provided strong genomic evidence supporting the hypothesis.
+Automated experimental validation confirms promiscuous PlsC activity
+Following the AI system's experimental design recommendations, the system performed sequence-similarity network analyses and selected XX PlsC candidates representing diverse archaeal lineages for biochemical characterization. [To be updated] 
+
+
+
+Eight PlsC homologs from Methanobacteriota, Candidatus Thermoplasmatota, Promethearchaeota, C. Bathyarchaeota, and C. Woesearchaeota exhibited robust heterologous expression in E. coli (Figure SX). 
+
+
+Initial activity assays confirmed that all archaeal PlsC variants retained canonical PA synthesis activity with bacterial substrates (LPA + oleoyl-CoA/ACP), similar to their bacterial counterparts EcPlsC (P26647) from gram-negative bacteria E. coli and BsPlsC (O07584) from gram-negative bacteria Bacillus subtilis. However, when tested with archaeal acceptor geranylgeranylglyceryl phosphate (GGGP) instead of LPA, only three variants—mPlsC (MBW3584121), t1PlsC (HWG90728), and t2PlsC (HUR68850)—catalyzed the formation of hybrid isoprenoidal/acyl phosphatidic acid (iaPA) from GGGP and oleoyl-CoA. 
+[LC-MS/MS; Initial confirmation using simulated tandem MS ions] LC-MS/MS analysis confirmed product identity through comparison with chemically synthesized iaPA standards (C18:1Δ⁹, C20 isoprenoid, m/z 707 → 425) (Figure X). This substrate promiscuity was not observed in bacterial PlsC controls or other archaeal variants, suggesting specialized evolutionary adaptations in specific lineages.
+Pathway reconstruction reveals complete hybrid lipid biosynthetic capability
+
+To further validate the functional coherence of phospholipids biosynthetic genes within the same genome, we mined and characterized three critical enzymes (GGGP, CarS, and DGGGPs) co-annotated with mPlsC in the Methanocaldococcus sp. genome. Our experimental results demonstrated that the recombinant mGGGPs was capable of synthesizing GGGP from GGPP and G1P substrates, serving as a critical precursor for both PlsC-mediated ib-PA and DGGGPs-mediated DGGGP biosynthesis. Similarly, mDGGGPs exhibited robust activity in synthesizing diether-linked DGGGP, which was further recognized by tandem phospholipid synthases to incorporate polar headgroups. 
+ 
+
+Building upon established knowledge of the critical role of CarS enzymes in archaeal ether lipid biosynthesis, we extended our investigation to elucidate their functional versatility in hybrid lipids synthesizing. Our results revealed that CarS exhibited unexpected substrate promiscuity, catalyzing the synthesis of hybrid CDP-ib-PA from ib-PA precursors indicating the hybrid product may be further used for phospholipids synthesis. Notably, the bacterial type PA (C18:1Δ⁹, C18:1Δ⁹) was also tested as substrate of mCarS, and CDP-DAG was determined via HPLC-MS/MS indicating its widely substrate promiscuity towards bacterial fatty acid derived lipids. 
+（1）以异戊烯-脂肪酰-PA 为底物组酶活实验结果
+
+（2）以18:1-PA 为底物组酶活实验结果
+
+[To be updated] We investigated whether archaea proteins can utilize G3P. Using G3P and GGPP as substrates, we demonstrated that mGGGPs, mPlsC and mCarS can synthesize G3P-based hybrid CDP-PA in one-pot reaction system.
+(1)Gu3GGGPs、DGGGPs和CarS酶一锅法反应测试
+ 
+(2) EcFadD、Gu3GGGPs和Gu3plsC酶一锅法反应测试
+
+1)Iso-15:0脂肪酸组样品的LC-MS（MRM模式）检测结果
+
+2)18:1脂肪酸组样品的LC-MS（MRM模式）检测结果
+
+(3) EcFadD、Gu3GGGPs、Gu3plsC和Gu3CarS酶一锅法反应测试
+
+3)18:1-FA实验组LC-MS（MRM模式）检测结果
+
+4)Iso-15:0 FA实验组LC-MS（MRM模式）检测结果
+
+
+(4) Gu3FadD、Gu3GGGPs、Gu3plsC和Gu3CarS酶一锅法反应测试
+
+1)18:1-FA实验组LC-MS（MRM模式）检测结果
+
+2)Iso-15:0 FA实验组LC-MS（MRM模式）检测结果
+
+
+
+
+Discussion
+In this study, with the advanced LLM and automated biofoundry we identified the critical enzymes for alkyl-isoprenoid chain hybrid archaeol synthesizing and providing a mechanistic framework for understanding early membrane evolution. 
+The discovery of archaeal enzymes capable of synthesizing hybrid phospholipids challenges the long-standing “lipid divide” hypothesis, which posits a strict segregation between bacterial and archaeal membrane lipid biosynthesis pathways. Our findings reveal that key archaeal enzymes, PlsC, GGGPs, and CarS, exhibited unexpected substrate promiscuity, enabling the production of hybrid lipids containing both bacterial (ester-linked) and archaeal (ether-linked) components. CarS enzymes, traditionally linked to archaeal ether lipid biosynthesis, also accepted bacterial-type phosphatidic acid (PA) substrates, producing CDP-DAG with bacterial fatty acid profiles. These mixed architectures challenge the lipid divide by showing that hybrid lipids were enzymatically feasible in early evolution. Collectively, these results imply that the “lipid divide” reflects functional specialization rather than an absolute phylogenetic barrier. Notably, the ability of archaeal enzymes to utilize G3P, a bacterial hallmark, resolves the paradox of eukaryotic membrane asymmetry. Additionally, we have annotated the FadD protein in the PlsC-GGGPs-DGGGPs-CarS co-occurrence Methanobacteriota sp. genome, though ACP machinery was reported to be absent in archaea. The potential utilization of environmental fatty acid by FadD to form acyl-CoA as the substrate for hybrid lipid synthesizing is also consist with the revers flow model of eukaryogenesis.  
+Our work supports a revised model of membrane evolution: LUCA’s membranes were likely heterogeneous, with dynamic lipid domains regulated by enzyme promiscuity. Divergence of bacterial and archaeal lineages involved gene loss rather than de novo invention, with archaea retaining hybrid lipid synthesis capabilities. The endosymbiotic integration of a bacterial endosymbiont into an archaeal host would have encountered pre-existing enzymatic machinery (e.g., CarS, PlsC), explaining eukaryotic membrane chimerism without invoking implausible large-scale lipid remodeling, and eukaryotic membrane composition became fixed during later evolution. 
+Our study established proof-of-principle for enzyme-mediated lipid mixing, several questions remain. For example, the selective pressure of favoring the type of lipids in later eukaryote and archaea evolution. Future investigations into natural occurrences of hybrid lipids in existing modern organisms, particularly Asgard archaea, could clarify their functional roles. Collectively, our findings collapse the artificial boundary between bacterial and archaeal membrane biogenesis. By demonstrating that a single enzymatic system can bridge the lipid divide, we redefine the evolutionary landscape of membrane origins. This work not only illuminates early cellular evolution but also equips synthetic biologists with tools to design adaptive membranes for biotechnological applications. Future explorations of enzyme plasticity promise to unravel the full scope of life’s molecular ingenuity.
+
+Methods
+
+1. Task Manager
+This study employs a task manager based on the LangGraph framework as the core coordinating component of the bioinverse synthesis analysis system. This task manager utilizes graph structure representation and state management capabilities to facilitate effective interaction between human scientists and multi-agent networks, providing intelligent support throughout the entire process of biosynthetic research.
+The task manager utilizes the graph structure of LangGraph to represent various agent components (literature reader, graph reasoner, experiment designer, robot operator, and computational analyst) as nodes in the graph, with their workflow relationships represented as edges. The task manager receives natural language instructions from scientists, parses their research intentions, determines the required combination of agents, and then dynamically constructs an execution graph to coordinate the work of each component.
+The system utilizes the state management mechanism of LangGraph to maintain contextual information during the research process, including user instructions, intermediate results, and decision histories. This state-maintaining capability enables the system to support long-duration, multi-round scientific research processes, while allowing for human expert intervention at key decision points such as ontology confirmation. Through prompt word engineering, the system can accurately understand the research needs of scientists:
+You are the task management expert in the intelligent assistant system for biosynthetic research.
+
+Task:
+Analyze the research instructions provided by the scientist and determine the intelligent agent components that need to be activated.
+
+Input: {scientist_instruction}
+
+requirement:
+1. Determine the research stage (literature research/path planning/experimental design/data analysis)
+2. Identify core mission objectives
+3. Determine the intelligent agent components that need to be invoked
+4. Determine decision points that require human confirmation
+
+Output format:
+{
+  "research_stage": "Current research stage",
+  "task_objective": "Specific task objective",
+  "required_agents": ["List of required agents"],
+  "human_intervention": "Whether human confirmation is required"
+}
+The workflow of the task manager comprises four primary stages: instruction parsing, agent scheduling, ontology confirmation, and result integration. During the ontology confirmation stage, the system utilizes LangGraph's interrupt mechanism to pause execution, presenting the candidate ontology set generated by the literature reader to experts for confirmation and modification before resuming the subsequent process. This design ensures the accuracy of knowledge graph construction, laying a solid foundation for the entire research process.
+The system achieves dynamic workflow control through conditional edges, selecting the most appropriate execution path based on task type and progress status. For example, for the exploration of new synthetic pathways, the system coordinates agents in the order of "literature reading → graph inference → experimental design → experimental execution → data analysis"; if human scientists have already confirmed the synthetic pathway, they can directly start from experimental design and skip the early stages.
+In summary, the task manager developed in this study achieves intelligent coordination in biosynthetic research through the LangGraph framework. It organizes multi-agent systems using graph structures and introduces human-machine collaboration at key points such as ontology confirmation, successfully enhancing the efficiency and accuracy of complex biosynthetic research.
+2. Literature reader
+This study utilizes the LangGraph framework to construct a literature reader agent for knowledge graph construction. By employing the interrupt mechanism in LangChain, a human expert confirmation step is introduced during the ontology extraction phase, enhancing the quality and accuracy of the graph. This approach combines the automated processing capabilities of large language models with the professional judgment of human experts, making it suitable for fields such as biomedicine that require high-precision knowledge representation.
+Ontology extraction and human confirmation
+In the ontology extraction stage, we utilize LLM to identify domain-related concepts from literature. We have designed specific prompts to guide the model to focus on key concept types such as biological entities, chemical compounds, and biochemical processes. The specific prompts are as follows:
+You are an expert in knowledge graph construction in the field of synthetic biology.   
+Task:
+Analyze the given literature and extract a list of key ontology types.
+ 
+Input literature: {literature_content}
+
+Category of Interest:
+1. Biological entities (genes, proteins, enzymes, cells, organisms)
+2. Compounds and molecules (lipids, membranes, etc.)
+3. Biochemical processes and pathways
+4. Physical conditions and properties
+
+requirement:
+- Only return general concept types, excluding specific instances
+- Each concept should be a single entity type
+- Use consistent terminology standards
+- Ensure that the concept has a clear meaning within the field
+
+Output format:
+Returned in the form of a Python list, such as ["enzyme", "lipid", "organism", "pathway", "membrane", "protein"]
+After processing all the literature abstracts, the system utilizes the interrupt mechanism of LangGraph to pause the execution process and presents the candidate ontology set to domain experts for confirmation. Experts can perform the following operations on the interactive interface:
+1Delete irrelevant or duplicate ontology types
+2Add the missing key ontology
+3Normalized ontology expression
+4Adjust ontology classification
+The interrupt mechanism ensures that the system can integrate expert feedback into the state, providing a high-quality ontological foundation for subsequent processing stages.
+entity extraction
+Based on the ontology set confirmed by experts, the system continues to perform entity extraction. The entity extraction node uses the following refined prompt words to identify specific entity instances in the text:
+You are an expert in knowledge graph construction in the field of synthetic biology.   
+
+Background:
+The ontology types that have been verified by experts include: {verified_ontology_list}
+
+Input literature: {literature_content}
+
+Task:
+1. Carefully analyze the content of the literature and identify specific entities that conform to the aforementioned ontology types
+2. Ensure that the extracted entities are complete and accurate, retaining their complete expressions in the original text
+3. Mark the ontological type to which each entity belongs
+
+Extraction principle:
+- The entity must be explicitly mentioned in the literature, rather than inferred
+- Entities should maintain the complete description of the original text, without truncating key modifiers
+- The same entity may appear in different forms (abbreviation, full name, etc.), and all forms should be identified
+- For entities with blurred boundaries, priority should be given to expressions that contain complete semantic information
+
+Output format:
+Entity type ¦ Entity text ‡ Entity type ¦ Entity text ‡ ..  
+
+Example:
+"The formation of hypothetical chimeric tetraether lipids will follow the biosynthetic pathway."
+Output: Pathway | Formation of hypothetical chimeric tetraether lipids
+
+"Enzymes catalyze the formation of ether bonds between isoprene chains and G3P skeletons.". " 
+Output: Reaction: Isoprene chain and G3P backbone ‡ Enzyme: Enzyme catalyzing ether bond formation
+This prompt word guides the large language model to accurately identify domain entities through clear task definitions, background information, and examples, ensuring that the entity extraction results are consistent with the ontology set confirmed by experts.
+Relation Extraction
+After entity extraction is completed, the system automatically enters the relation extraction phase, using the following cue words to analyze the semantic associations between entities:
+
+You are an expert in knowledge graph construction in the field of synthetic biology.   
+
+Background:
+The system has extracted the following entity list from the literature: {extracted_entities_list}
+Input literature: {literature_content}
+
+Task:
+1. Analyze the content of the literature and identify the semantic relationships that exist between the aforementioned entities
+2. Pay attention to the co-occurrence patterns, causal relationships, hierarchical relationships, etc. of entities
+3. Consider that entities may appear in the form of pronouns, synonyms, or variants
+
+Principles of relationship extraction:
+- The relationship must be based on textual evidence, not inferred from common sense or external knowledge
+- Identify direct and implicit relationships, but distinguish between certainty and possibility
+- Pay attention to the negative expressions and hypothetical situations in the text
+
+Output format:
+(Entity A type ¦ Entity A text † Entity B type ¦ Entity B text)‡ ..  
+
+Example:
+"The reductive glycine pathway has been discovered in Desulfovibrio, a bacterium that lives in hydrothermal environments on the seabed."
+Output: (Pathway ¦ Reductive glycine pathway † Biology ¦ Desulfovibrio) ‡ (Environment ¦ Seafloor hydrothermal vent † Biology ¦ Desulfovibrio)
+The cue words for relation extraction underscore the significance of identifying semantic associations between entities from text, ensuring that the constructed knowledge graph accurately reflects the domain knowledge structure described in the literature.
+3. Experimental designer agent
+As a core component in the biological inverse synthesis analysis system, the experiment designer agent is responsible for synthesizing pathway planning and experimental scheme design based on knowledge graphs and professional biological tools.
+The experimental designer adopts a modular architecture, encompassing two functional units: synthetic pathway reasoning and experimental verification design. The synthetic pathway reasoning module is responsible for generating biologically plausible synthetic routes, while the experimental verification design module converts theoretical predictions into actionable experimental protocols. This dual-module design enables the experimental designer to handle knowledge updates received from literature readers within the overall system, while also providing specific experimental guidance to robot operators.
+The core functions of the experiment designer are guided by the following prompt templates, which define its workflow within the system:
+You are a professional expert in biosynthetic pathway analysis and experimental design.   
+Task:
+Analyze the biosynthetic pathway of the target molecule and design an experimental verification scheme
+
+Background:
+ - Target molecule: {target_molecule}
+- Known information: {known_information}
+- Available tools: knowledge graph search, biosynthetic prediction, genomic screening
+
+Steps:
+1. Synthetic pathway analysis
+- Utilize knowledge graph search to acquire biosynthetic knowledge related to molecules
+- Identify potential key reactants, enzymes, and metabolic intermediates
+- Add known reactants to the BioNavi rule library
+Generate detailed synthetic prediction information (enzyme, reactant, reaction, pathway)
+2. Experimental verification design
+- Identify key enzyme genes through a two-stage screening strategy
+- Construct a candidate gene set based on the screening results of key enzymes in the first stage
+- Search for key enzymes in the second stage within the candidate genome
+-Organize the results according to taxonomy to ensure representative sample coverage
+
+Output requirements:
+1. Synthetic pathway analysis:
+[Enzymes] {enzyme_summary}: enzyme1, enzyme2, 
+[Reactants] {reactant_summary}: reactant1, reactant2, 
+[Reaction] {reaction_summary}: reaction1, reaction2, 
+[Path]
+- Pathway 1: {pathway1_summary}: molecule1 > molecule2 > molecule3
+- Pathway 2: {pathway2_summary}: molecule1 > molecule2 > molecule3
+2. Experimental verification design:
+[Screening Strategy] {screening_approach}
+[Genome classification] Candidate genomes classified according to {taxonomy_criteria}
+[Representative Samples] {sample_count} representative genomes recommended for experimental verification
+
+Precautions:
+- All predictions must be based on reliable biochemical principles
+- Experimental design must consider both diversity and representativeness of classification
+- Ensure that all relationships are supported by literature, distinguishing between deterministic and probabilistic relationships
+- Organize the final answer using hierarchical headings and numbering logic
+The synthetic pathway inference module utilizes interaction with the knowledge graph to acquire crucial biochemical knowledge, enabling the prediction of synthetic pathways. This module follows a three-step inference process: knowledge acquisition, rule enhancement, and synthesis prediction, with each step forming a coherent analytical chain.
+•In the knowledge acquisition stage, experimental designers rely on the structured information provided by the knowledge graph to filter knowledge data related to the target molecule from the triples extracted from existing literature. This process is facilitated by graph querying and intelligent filtering mechanisms, ensuring that subsequent analysis is based on reliable scientific foundations.
+•The rule enhancement stage transforms information obtained from the knowledge graph into BioNavi's rules, significantly improving prediction accuracy by integrating domain-specific knowledge. This step computationally achieves the transformation from static knowledge to dynamic rules, providing a scientific basis for the synthetic prediction in the third stage.
+•In the synthesis prediction stage, detailed synthesis information is generated by integrating the results of the previous two stages, including required enzymes, reactants, reactions, and complete pathways.
+The experimental verification design module converts theoretical predictions of synthetic pathway reasoning into actionable experimental protocols, establishing a bridge from computational prediction to experimental verification. This module implements an intelligent screening strategy, identifying potential experimental targets containing key synthetic enzymes through bioinformatics methods.
+The module adopts a two-stage screening strategy: first, the genome database is screened based on the presence of the first key enzyme to establish a preliminary candidate set; then, the second key enzyme is searched within this candidate set to identify the genome that possesses both key enzymes. This strategy significantly improves screening efficiency and avoids the computational burden of exhaustive search in the entire genome database.
+The screening results are organized according to the taxonomic hierarchy (domain, kingdom, phylum), creating a comprehensive classification table that maps genomic identifiers to their encoded proteins and taxonomic affiliations. This classification method enables the system to select representative samples from different taxonomic groups for experimental verification, ensuring the scientific representativeness of experimental results. The experimental design considers various factors such as taxonomic diversity, evolutionary position rationality, and experimental feasibility, providing clear guidance for subsequent experimental execution by robot operators.
+
+
+
+
+
+All molecular biology and microbiology protocols were performed on a previously reported semiautomated biofoundry work cell, and all the chemicals were chemically synthesized or purchased from Sigma-Aldrich.
+Enzyme mining. To investigate the genomic potential for hyPA biosynthesis in Archaea, homology-based genome mining was performed. Initially, predicted PlsC protein sequences from archaeal representatives were employed as queries for protein BLAST (BLASTP) searches against the NCBI non-redundant (NR) database. Genome assemblies corresponding to significant pBLAST hits (E-value ≤ 10⁻⁵) were retrieved and annotated using the KEGG Automatic Annotation Server (KAAS) to assign KEGG Orthology (KO) identifiers. 
+KO IDs associated with key lipid biosynthesis enzymes: 1-acyl-sn-glycerol-3-phosphate acyltransferase (PlsC, K00655) and geranylgeranylglyceryl phosphate synthase (GGGPs, K17104), and long chain fatty acid CoA ligase (FadD, K01897) were systematically screened across the annotated genomes. Genomes co-harboring GGGPs and PlsC homologs were prioritized for further analysis. Within this subset, the presence of CDP-archaeol synthase (CarS, K19664) and long chain fatty acid CoA ligase (FadD, K01897) homologs were verified via their respective KO IDs. 
+Microbial strains, media, and growth conditions. E. coli DH5α was used for plasmid amplification (37 °C, 200 rpm), and BL21(DE3) (20 °C, 200 rpm, supplemented with 50 μg/ml kanamycin) was used for protein expression, and grown in lysogeny broth (LB) medium. 
+Plasmid construction and protein purification. All the mined genes were codon optimized for E. coli and synthesized from GENEWIZ company (Suzhou, China). The genes were separately inserted into the MCS of pET28a with a C 6*His tag. The expression of proteins was analyzed using SDS-PAGE or Western Blot. The soluble protein GGGPs, membrane protein PlsC and CarS were purified using previous reported methods, respectively. 
+Enzyme activity assay. The purified GGGPs, PlsC and CarS were subjected to enzyme activity assay. 
+For GGGPs activity assay, 1 μM enzyme was mixed with buffer containing 200 μM geranylgeranyl pyrophosphate (GGPP), 10 mM glycerol-1-phosphate (G1P) or glycerol-1-phosphate (G3P), 10 mM MgCl2, 50 mM Tris-HCl, pH 8.0, 150 mM NaCl. 
+For PlsC activity assay, the reaction was performed in 50 μL of assay buffer containing a final concentration of 50 mM Tris-HCl, pH 8.0, 150 mM NaCl. For phosphatidic acid (PA) synthesis, 15 μM purified protein was mixed with 200 μM lysophosphatidic acid (LPA, C16:0) and 200 μM oleoyl-ACP or oleoyl-CoA. For hyPA synthesis, 15 μM purified protein was mixed with 200 μM geranylgeranylglyceryl phosphate (GGGP, synthesized by China WuXi AppTec) and 200 μM oleoyl-ACP or oleoyl-CoA. 
+For CarS activity assay, 5 μM enzyme was mixed with buffer containing 200 μM PA (C18:1Δ⁹, C18:1Δ⁹) or hyPA (C18:1Δ⁹, C20 isoprenoid), 5 mM CTP, 25 mM Tris-HCl, pH 8.0, 150 mM NaCl, 10 mM MgCl2 and 0.05% DDM. 
+All reactions were incubated at 37 °C for 3 h, respectively. The reactions were quenched with 300 μL of n-butanol. Lipids were extracted two times with 0.3 mL of n-butanol and evaporated under a stream of nitrogen gas and resuspended in 50 μL of methanol for LC−MS analysis.
+Lipids analysis. The lipids were analyzed using a triple quadrupole LC‒MS system equipped with an Agilent 1290 HPLC and an Agilent 6470B triple quadrupole mass spectrometer (Agilent, USA). The fermentation products and enzymatic reactions were separated on a Nucleodur C18 gravity column (3 μm, 150 × 4.6 mm) and a Phenomenex Luna C18 column (5 μm, 2.0 × 100 mm), respectively. The columns were maintained at 55 °C with a flow rate of 0.3 mL min-1. A total of 2 µL of sample was injected and eluted with the following 15 min gradient: 2 min, 0% B; 10 min, 100% B; 12 min, 100% B; 15 min, 0% B. Eluent A (50% isopropanol, 40% ddH2O, 10% methanol, 5 mM ammonium acetate) and eluent B (95% isopropanol, 5% ddH2O, 5 mM ammonium acetate) were used as mobile phases. The mass spectrometer was equipped with an electrospray ionization (ESI) source and was operated in negative mode with a capillary voltage of 5 kV and a cone voltage of 30 V. Nitrogen was the nebulizer gas, and the source temperature was maintained at 120 °C. Quantification was performed by using the multiple reaction monitoring (MRM) mode, with transitions of m/z 673 → 391 (PA), m/z 707 → 425 (hyPA), and m/z 1012 → 770 (hybrid CDP-PA).
+
+LLMTOOLS工具梳理
+1.输入数据: 分子间杂合脂质的知识、关于古菌脂质 (GDGTs) 的文献。
+处理工具/操作: 聊天 / 文献回顾 / 图谱可视化
+输出数据: 假说/目标：分子内杂合脂质（例如 IB-GDGT 结构/新的反应式）的潜在存在及其合成途径。来自Claude的初始提问
+反应挖掘工具（待测试）：https://pubs.acs.org/doi/10.1021/acs.jcim.1c00284
+Automated Chemical Reaction Extraction from Scientific Literature
+https://pubs.acs.org/doi/10.1021/acs.jcim.4c00572?ref=recommended
+OpenChemIE: An Information Extraction Toolkit for Chemistry Literature
+具体希望的文献和反应规则？
+图推理能否补充新反应规则？
+2.输入数据: 目标结构 (IB-GDGT)
+处理工具/操作: 聊天 / 文献回顾 / 工具调用 (BioNavi, 反应规则数据库扩展)
+输出数据: 陈述：IB-GDGT 生物合成途径未知。请求进行逆向生物合成途径预测。
+输入数据: 请求更新与 GDGT/杂合脂质合成相关的规则/文献。
+处理工具/操作: 工具 #1 (文献挖掘、反应规则数据库更新)
+反应挖掘工具（待测试）：https://pubs.acs.org/doi/10.1021/acs.jcim.1c00284
+Automated Chemical Reaction Extraction from Scientific Literature
+https://pubs.acs.org/doi/10.1021/acs.jcim.4c00572?ref=recommended
+OpenChemIE: An Information Extraction Toolkit for Chemistry Literature
+阶段二：逆向合成预测与候选酶鉴定
+3.输出数据: BioNavi 内更新的知识库。输入数据: 目标结构 (IB-GDGT)、更新的知识库。
+处理工具/操作: 工具 #2 (BioNavi 逆向生物合成)-针对化学反应提取，加入到BioNavi 规则库中https://github.com/zengtsysu/BioNavi/tree/main/dataset
+输出数据: 推定的逆向生物合成途径：前体（例如 DGGGP、酰基供体）、关键酶（例如 GGGPS，可能作用于 DGGGP 的 PlsC）
+5.输入数据: 逆向生物合成结果（候选酶，例如 PlsC）。
+处理工具/操作: 聊天 / 分析 / 工具调用 (UniProt 或 Blast)
+6.输出数据: 数据库搜索查询：在古菌中搜索 PlsC 同源物。GGGPS共存
+输入数据: PlsC 种子序列/特征谱，目标数据库（古菌）。
+处理工具/操作: Blast / 数据库搜索
+7.输出数据: 在古菌中发现的推定 PlsC 序列列表（约 120 个匹配项）
+输入数据: 推定的古菌 PlsC 序列列表。
+处理工具/操作: SSN/ 系统发育分组/ 人为最终挑选
+输出数据: 聚类后的序列；筛选出用于实验的代表性古菌 PlsC 	候选序列（例如 12 条）。明确需要 GGGPS 酶和化学合成的标准品（DGGGP、杂合脂质）。最终筛选出的序列
+SSN、IQ-TREE进化树输入：120 个匹配项的氨基酸序列，对应文件为PlsC_GGGPS_genomes_All_PlsC__SEQ - +Ec Bs.fasta
+SSN输出结果：length plsc-3 Ec Bs-20250507.cys
+SSN: 是用的在线网站esi分析的，分析的结果是用cytoscape可视化处理
+IQ-TREE进化树输入：来自GTDB-Tk？https://github.com/Ecogenomics/GTDBTk
+IQ-TREE进化树调用命令“iqtree -s input.msa.fasta -bb 1000 -nt 36 -m LG+R4”输出结果内容：下图
+进化树工具：https://github.com/iqtree/iqtree2（github)
+8.输入数据: 筛选出的古菌 PlsC 基因GGGPS 基因、表达系统、底物（DGGGP, acyl-CoA/ACP）、化学合成的标准品。
+处理工具/操作: 部分自动化实验 (LLM 生成的实验方案调整、重组表达、酶联级联反应？测定 [GGGPS + PlsC]、使用 MRM 和标准品比较的 LC-MS/MS)
+输出数据: 确认能够合成 IB-GDGT 前体 (acyl-DGGGP) 的古菌 PlsC 序列PLSC GGGPS DGGGPS
+固定协议根据酶调参；从实验结果论证其它策略；
+下图为目前protocol适配opentrons的实验，最主要是萃取和蛋白纯化部分
+MS结果预测与比对 质谱预测与结果解读的工具整理
+用PIP CFM-ID即可
