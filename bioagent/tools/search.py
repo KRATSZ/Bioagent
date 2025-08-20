@@ -172,12 +172,11 @@ Output:"""
             return []
 
         triplets = []
-        from neo4j import GraphDatabase
-        os.environ["NEO4J_URI"] = "neo4j+s://bb60f546.databases.neo4j.io:7687"
-        os.environ["NEO4J_USERNAME"] = "neo4j"
-        os.environ["NEO4J_PASSWORD"] = "sWFLqNrAjD50BrArVUhQHh3CKiPSH0qJnUPU0nW1BpQ"
-        driver = GraphDatabase.driver(os.getenv("NEO4J_URI"),
-                                      auth=(os.getenv("NEO4J_USERNAME"), os.getenv("NEO4J_PASSWORD")))
+        # 保持硬编码连接（按用户指示），同时允许环境变量覆盖
+        uri = os.getenv("NEO4J_URI") or "neo4j+s://bb60f546.databases.neo4j.io:7687"
+        user = os.getenv("NEO4J_USERNAME") or "neo4j"
+        pwd = os.getenv("NEO4J_PASSWORD") or "sWFLqNrAjD50BrArVUhQHh3CKiPSH0qJnUPU0nW1BpQ"
+        driver = GraphDatabase.driver(uri, auth=(user, pwd))
 
         for keyword in keywords:
             with driver.session() as session:

@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+langgraph
+openai
+pydantic
+python-dotenv
+mcp
+numpy
+pytest
+

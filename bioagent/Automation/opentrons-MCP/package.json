@@ -1,0 +1,30 @@
+{
+  "name": "opentrons-mcp",
+  "version": "1.0.23",
+  "description": "MCP server for Opentrons HTTP API documentation and endpoint discovery",
+  "type": "module",
+  "bin": {
+    "opentrons-mcp": "./index.js"
+  },
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [
+    "opentrons",
+    "mcp",
+    "api"
+  ],
+  "repository": "https://github.com/yerbymatey/opentrons-mcp",
+  "author": "yerbymatey",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "latest",
+    "axios": "^1.6.0",
+    "form-data": "^4.0.3",
+    "nats": "^2.19.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

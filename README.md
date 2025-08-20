@@ -18,10 +18,16 @@ os.environ["OPENAI_API_KEY"] = "你的API密钥"
 os.environ["OPENAI_API_BASE"] = "https://api.deepseek.com/v1"
 model = "deepseek-chat"
 ```
-## 4.运行
+## 4. 运行
 ```
 python main.py
 ```
+
+### 可选：新增能力依赖（质谱/实验设计/HTTP）
+- CFM-ID 质谱预测：`pip install cfm-id`
+- DoE 优化（可选）：`pip install pyDOE2`
+- mzML 解析：`pip install pymzml pyteomics`
+- HTTP 调用（requests 已内置于 requirements）
 # 二、工具添加
 ## 第一步：工具实现
 
@@ -101,6 +107,13 @@ BioAgent/
    │  ├─ Genome.py            # 基因组采集/查询工具
    │  ├─ PathPrediction.py    # 逆合成/路径预测工具（BioNavi-NP 相关）
    │  ├─ search.py            # 知识图谱/检索相关
+   │  ├─ analysis_tools.py    # LCMSParser/MzMLParser/CFMIDPredictor/HypothesisVerifier
+   │  ├─ doe_planner.py       # DoE 实验设计（全因子/简化LHS）
+   │  ├─ literature_processor.py # Biomni biorxiv 抽取封装
+   │  ├─ kg_write.py          # Neo4j 写入（add_node/add_edge）
+   │  ├─ sop_generator.py     # 本地 Otcoder 协议生成链封装
+   │  ├─ otcoder_http.py      # Otcoder FastAPI 的 HTTP 调用工具
+   │  ├─ human_tool.py        # 人在回路（HITL）占位工具
    │  └─ prompts.py
    ├─ Biomni/                 # 外部“生物领域工具集”源码（已内嵌）
    │  └─ biomni/tool/...      # database、literature、biochemistry、genetics 等
@@ -155,6 +168,28 @@ python .\app.py
 
 # 4) 运行后端测试
 .\.venv\Scripts\python.exe .\Docs&test\Test\test_backend.py
+
+# 5) 新增工具冒烟测试
+$env:PYTHONPATH = (Get-Location).Path
+.\.venv\Scripts\python .\Docsandtest\Test\test_smoke_new_tools.py
+```
+
+### 新增工具快速试用（对话输入示例）
+- DoE 设计: 调用 `DoEPlanner`，输入 `{ "factors": {"temp":[20,30], "pH":[6,7,8]}, "mode": "full" }`
+- SOP/代码生成: 调用 `SOPGenerator`，输入 `{ "hardware_config": "Robot Model: OT-2\nAPI Version: 2.19", "user_goal": "96孔板移液稀释", "action": "code" }`
+- LC-MS 解析: 调用 `LCMSParser`，输入 `{ "csv_path":"path/to/mrm.csv", "transitions":[{"precursor_mz":707,"product_mz":425,"ppm":10}] }`
+- CFM-ID 预测: 调用 `CFMIDPredictor`，输入 `{ "smiles": "C[C@H](O)C(=O)O" }`
+- 假设验证: 调用 `HypothesisVerifier`，输入 `{ "hypothesis":"...", "observations":{...}}`
+- 文献处理: 调用 `LiteratureProcessor`，输入 `{ "subject":"bioinformatics", "limit":10 }`
+- 图谱写入: 调用 `KGWrite`，输入 `{ "op":"add_edge", "data": {"head":"A","tail":"B","type":"REL","props":{"source":"exp"}} }`
+- HITL：调用 `HumanInTheLoop`，输入 `{ "title":"本体确认", "payload":{...} }`（工具会返回带 `HITL_REQUEST` 的结构化提示，直接在聊天中粘贴确认后的 JSON 即可继续）
+
+### Otcoder FastAPI（可选，HTTP 正向验证）
+```powershell
+# 启动 Otcoder FastAPI（默认 127.0.0.1:8000）
+.\.venv\Scripts\python -m uvicorn bioagent.OTcoder.api_server:app --host 127.0.0.1 --port 8000
+
+# 在另一窗口运行冒烟脚本或在 Agent 中调用 `OtcoderHTTP` 进行 generate_sop/generate_code/simulate
 ```
 
 ## 七、更多文档
