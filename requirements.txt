@@ -19,5 +19,4 @@ cfm-id
 # 可选：pyDOE2 若安装失败，DoEPlanner 将退化为内置实现
 pyDOE2
 requests==2.32.3
-pymzml==2.5.8
 pyteomics==4.7.3
