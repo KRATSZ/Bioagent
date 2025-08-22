@@ -70,7 +70,7 @@ MOMENTUM_VERIFY=false
 MOMENTUM_TIMEOUT=5
 MOMENTUM_MOCK=1
 
-AI190_API_KEY="sk-Fbf6T3Gd8o3srcifmRyfUa3PfKmtbNuYgNzind0j92h2sV3n"
+AI190_API_KEY="XXX"
 AI190_BASE_URL="https://api.ai190.com/v1"
 AI190_MODEL="gemini-2.5-pro"
 ```
